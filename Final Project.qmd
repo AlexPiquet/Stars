@@ -4,3 +4,14 @@ format: html
 editor: visual
 ---
 
+```{r}
+here::i_am("Stars.Rproj")
+library(here)
+library(vroom)
+
+Planet<- read.delim("allplanets.csv", sep=":")
+```
+## Question 2
+
+[Github link](https://github.com/AlexPiquet/Stars)
+
