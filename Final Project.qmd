@@ -8,10 +8,72 @@ editor: visual
 here::i_am("Stars.Rproj")
 library(here)
 library(vroom)
-
+library(knitr)
+library(ggplot2)
+library(tidyr)
+library(dplyr)
 Planet<- read.delim("allplanets.csv", sep=":")
 ```
 ## Question 2
 
 [Github link](https://github.com/AlexPiquet/Stars)
+
+## Question 3
+
+The Planet dataset contains `r NROW(Planet)` rows and `r NCOL(Planet)` columns, therefore the loading of our dataset should be correct
+
+## Question 4
+
+```{r}
+number_of_observations <- nrow(Planet)
+number_of_variables <- ncol(Planet)
+Planet[Planet == "Unknown"] <- NA
+number_of_missing_value <-  colSums(is.na(Planet))
+number_of_observations_one_missing_value <- sum(rowSums(is.na(Planet)) > 0)
+data_question_4 <- data.frame(Metric = c("Number of observations","Number of variables","Number of missing values per variable", "Number of observations with missing values"), Value =c(number_of_observations,number_of_variables,paste(number_of_missing_value,collapse = ", "),number_of_observations_one_missing_value))
+kable(data_question_4)
+```
+## Question 5
+
+```{r}
+ggplot(Planet,aes(x=RELATIVE.DENSITY,y=mass))+
+  geom_point()
+```
+## Question 6
+
+## Question 7
+
+```{r}
+terrain_data <- Planet |>
+  separate_rows(terrain.type, sep = ",")|>
+  select(planet_idx, terrain.type)
+climate_data <- Planet|>
+  separate_rows(CLIMATE, sep = ",")|>
+  select(planet_idx,CLIMATE)
+kable(terrain_data)
+kable(climate_data)
+```
+
+## Question 8
+
+```{r}
+climate_count <- climate_data |>
+  group_by(planet_idx) |>
+  summarise(num_climates = n_distinct(CLIMATE))
+ggplot(climate_count, aes(x = factor(num_climates))) +
+  geom_bar(fill="red")+
+  xlab("Types of climate")+
+  ylab("Number of planet")
+
+terrain_count <- terrain_data |>
+  group_by(planet_idx) |>
+  summarise(num_terrains = n_distinct(terrain.type))
+ggplot(terrain_count, aes(x = factor(num_terrains))) +
+  geom_bar(fill = "blue")+
+  xlab("Types of terrain")+
+  ylab("Number of planet")
+```
+
+
+
 
